@@ -3,9 +3,8 @@ import AppError from '../../errors/AppError';
 
 const prisma = new PrismaClient();
 
-// Buffer time 
+// Buffer time
 const BUFFER_MINUTES = 10;
-
 
 export const createBooking = async (data: {
   resource: string;
@@ -13,7 +12,6 @@ export const createBooking = async (data: {
   startTime: Date;
   endTime: Date;
 }): Promise<Booking> => {
-
   const start = new Date(data.startTime);
   const end = new Date(data.endTime);
 
@@ -23,7 +21,6 @@ export const createBooking = async (data: {
       resource: data.resource,
       OR: [
         {
-      
           startTime: {
             lte: new Date(end.getTime() + BUFFER_MINUTES * 60000),
           },
@@ -38,11 +35,11 @@ export const createBooking = async (data: {
   if (conflict) {
     throw new AppError(
       409,
-      `Conflict detected: ${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`
+      `${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`,
     );
   }
 
- // Save booking if no conflict
+  // Save booking if no conflict
   const booking = await prisma.booking.create({
     data: {
       resource: data.resource,
@@ -54,7 +51,6 @@ export const createBooking = async (data: {
 
   return booking;
 };
-
 
 export const getBookings = async (filters?: {
   resource?: string;
@@ -155,7 +151,6 @@ export const updateBooking = async (data: {
   });
 };
 
-
 export const deleteBooking = async (id: string): Promise<Booking> => {
   const booking = await prisma.booking.findUnique({ where: { id } });
 
@@ -165,4 +160,3 @@ export const deleteBooking = async (id: string): Promise<Booking> => {
 
   return prisma.booking.delete({ where: { id } });
 };
-

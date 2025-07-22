@@ -16,7 +16,7 @@ exports.deleteBooking = exports.updateBooking = exports.getBookingById = exports
 const client_1 = require("@prisma/client");
 const AppError_1 = __importDefault(require("../../errors/AppError"));
 const prisma = new client_1.PrismaClient();
-// Buffer time 
+// Buffer time
 const BUFFER_MINUTES = 10;
 const createBooking = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const start = new Date(data.startTime);
@@ -38,7 +38,7 @@ const createBooking = (data) => __awaiter(void 0, void 0, void 0, function* () {
         },
     });
     if (conflict) {
-        throw new AppError_1.default(409, `Conflict detected: ${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`);
+        throw new AppError_1.default(409, `${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`);
     }
     // Save booking if no conflict
     const booking = yield prisma.booking.create({
