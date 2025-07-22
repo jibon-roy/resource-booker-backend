@@ -32,6 +32,17 @@ model User {
   @@map("users")
 }
 
+// Booking
+
+model Booking {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  resource    String
+  requestedBy String
+  startTime   DateTime
+  endTime     DateTime
+  createdAt   DateTime @default(now())
+}
+
 enum UserRoleEnum {
   USER
   SUPERADMIN
