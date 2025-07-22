@@ -1,7 +1,13 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { createBooking, getBookings, deleteBooking } from './booking.service';
+import {
+  createBooking,
+  getBookings,
+  deleteBooking,
+  updateBooking,
+  getBookingById,
+} from './booking.service';
 
 const createBookingController = catchAsync(async (req, res) => {
   const result = await createBooking(req.body);
@@ -35,6 +41,37 @@ const getBookingsController = catchAsync(async (req, res) => {
   });
 });
 
+const getBookingByIdController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await getBookingById(id);
+
+  if (!result) {
+    return res.status(httpStatus.NOT_FOUND).json({
+      success: false,
+      message: 'Booking not found',
+    });
+  }
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Booking retrieved successfully',
+    data: result,
+  });
+});
+
+const updateBookingController = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const result = await updateBooking({ ...req.body, id });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Booking updated successfully',
+    data: result,
+  });
+});
+
 const deleteBookingController = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await deleteBooking(id);
@@ -50,5 +87,7 @@ const deleteBookingController = catchAsync(async (req, res) => {
 export const BookingControllers = {
   createBookingController,
   getBookingsController,
+  getBookingByIdController,
+  updateBookingController,
   deleteBookingController,
 };

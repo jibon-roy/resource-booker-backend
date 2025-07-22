@@ -15,6 +15,16 @@ router.post(
 // Get All Bookings 
 router.get('/', BookingControllers.getBookingsController);
 
+// Get Booking by ID
+router.get('/:id', BookingControllers.getBookingByIdController);
+
+// Update Booking
+router.put(
+  '/:id',
+  validateRequest(bookingValidation.updateBookingValidation),
+  BookingControllers.updateBookingController,
+);
+
 //  Delete 
 router.delete('/:id', BookingControllers.deleteBookingController);
 

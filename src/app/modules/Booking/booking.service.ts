@@ -117,6 +117,44 @@ export const getBookings = async (filters?: {
   };
 };
 
+export const getBookingById = async (id: string): Promise<Booking | null> => {
+  const booking = await prisma.booking.findUnique({
+    where: { id },
+  });
+  if (!booking) {
+    throw new AppError(404, 'Booking not found');
+  }
+
+  return booking;
+};
+
+export const updateBooking = async (data: {
+  id: string;
+  resource?: string;
+  requestedBy?: string;
+  startTime?: Date;
+  endTime?: Date;
+}): Promise<Booking> => {
+  const booking = await prisma.booking.findUnique({
+    where: { id: data.id },
+  });
+
+  if (!booking) {
+    throw new AppError(404, 'Booking not found');
+  }
+
+  // Update booking
+  return prisma.booking.update({
+    where: { id: data.id },
+    data: {
+      resource: data.resource ?? booking.resource,
+      requestedBy: data.requestedBy ?? booking.requestedBy,
+      startTime: data.startTime ?? booking.startTime,
+      endTime: data.endTime ?? booking.endTime,
+    },
+  });
+};
+
 
 export const deleteBooking = async (id: string): Promise<Booking> => {
   const booking = await prisma.booking.findUnique({ where: { id } });

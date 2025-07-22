@@ -13,6 +13,23 @@ const createBookingValidation = z.object({
   }),
 });
 
+const updateBookingValidation = z.object({
+  params: z.object({
+    id: z.string({ required_error: 'Booking ID is required' }),
+  }),
+  body: z.object({
+    resource: z.string().optional(),
+    requestedBy: z.string().optional(),
+    startTime: z.string().refine(val => !isNaN(Date.parse(val)), {
+      message: 'Invalid start time',
+    }).optional(),
+    endTime: z.string().refine(val => !isNaN(Date.parse(val)), {
+      message: 'Invalid end time',
+    }).optional(),
+  }),
+});
+
 export const bookingValidation = {
   createBookingValidation,
+  updateBookingValidation,
 };
