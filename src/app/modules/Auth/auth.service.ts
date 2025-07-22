@@ -3,7 +3,7 @@ import httpStatus from 'http-status';
 import { Secret } from 'jsonwebtoken';
 import config from '../../../config';
 import AppError from '../../errors/AppError';
-import { generateToken } from '../../utils/generateToken';
+import { generateToken, JwtExpiresIn } from '../../utils/generateToken';
 import prisma from '../../utils/prisma';
 import { UserServices } from '../User/user.service';
 
@@ -40,7 +40,7 @@ const loginUserFromDB = async (payload: {
       role: userData.role,
     },
     config.jwt.access_secret as Secret,
-    config.jwt.access_expires_in as string,
+    config.jwt.access_expires_in as JwtExpiresIn,
   );
   return {
     id: userData.id,
