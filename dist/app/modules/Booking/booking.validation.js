@@ -21,12 +21,19 @@ const updateBookingValidation = zod_1.z.object({
     body: zod_1.z.object({
         resource: zod_1.z.string().optional(),
         requestedBy: zod_1.z.string().optional(),
-        startTime: zod_1.z.string().refine(val => !isNaN(Date.parse(val)), {
+        startTime: zod_1.z
+            .string()
+            .refine(val => !isNaN(Date.parse(val)), {
             message: 'Invalid start time',
-        }).optional(),
-        endTime: zod_1.z.string().refine(val => !isNaN(Date.parse(val)), {
+        })
+            .optional(),
+        endTime: zod_1.z
+            .string()
+            .refine(val => !isNaN(Date.parse(val)), {
             message: 'Invalid end time',
-        }).optional(),
+        })
+            .optional(),
+        status: zod_1.z.enum(['UPCOMING', 'ONGOING', 'PAST']).optional(),
     }),
 });
 exports.bookingValidation = {

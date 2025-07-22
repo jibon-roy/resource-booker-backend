@@ -53,29 +53,73 @@ const createBooking = (data) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.createBooking = createBooking;
 const getBookings = (filters) => __awaiter(void 0, void 0, void 0, function* () {
-    const whereClause = {};
-    //  Filter by resourc
+    const andConditions = [];
+    // ✅ Resource filter
     if (filters === null || filters === void 0 ? void 0 : filters.resource) {
-        whereClause.resource = filters.resource;
+        andConditions.push({
+            resource: filters.resource,
+        });
     }
-    // Filter by date
+    // ✅ Date filter (startTime within the date range)
     if (filters === null || filters === void 0 ? void 0 : filters.date) {
         const date = new Date(filters.date);
         const nextDay = new Date(date);
         nextDay.setDate(nextDay.getDate() + 1);
-        whereClause.startTime = {
-            gte: date,
-            lt: nextDay,
-        };
+        andConditions.push({
+            startTime: {
+                gte: date,
+                lt: nextDay,
+            },
+        });
     }
+    // ✅ Search term filter (requestedBy OR resource)
+    if (filters === null || filters === void 0 ? void 0 : filters.searchTerm) {
+        andConditions.push({
+            OR: [
+                {
+                    requestedBy: {
+                        contains: filters.searchTerm,
+                        mode: 'insensitive',
+                    },
+                },
+                {
+                    resource: {
+                        contains: filters.searchTerm,
+                        mode: 'insensitive',
+                    },
+                },
+            ],
+        });
+    }
+    // ✅ Status filter on-the-fly (time-based, no DB status dependency)
+    if (filters === null || filters === void 0 ? void 0 : filters.status) {
+        const now = new Date();
+        if (filters.status === 'upcoming') {
+            andConditions.push({
+                startTime: { gt: now },
+            });
+        }
+        if (filters.status === 'ongoing') {
+            andConditions.push({
+                startTime: { lte: now },
+                endTime: { gte: now },
+            });
+        }
+        if (filters.status === 'past') {
+            andConditions.push({
+                endTime: { lt: now },
+            });
+        }
+    }
+    const whereClause = andConditions.length > 0 ? { AND: andConditions } : {};
     const page = (filters === null || filters === void 0 ? void 0 : filters.page) && filters.page > 0 ? filters.page : 1;
     const limit = (filters === null || filters === void 0 ? void 0 : filters.limit) && filters.limit > 0 ? filters.limit : 10;
     const skip = (page - 1) * limit;
-    // all user
+    // ✅ Total count
     const total = yield prisma.booking.count({
         where: whereClause,
     });
-    // fetch data
+    // ✅ Fetch bookings (sorted by startTime)
     const bookings = yield prisma.booking.findMany({
         where: whereClause,
         orderBy: {

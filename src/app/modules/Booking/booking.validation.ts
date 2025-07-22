@@ -20,12 +20,19 @@ const updateBookingValidation = z.object({
   body: z.object({
     resource: z.string().optional(),
     requestedBy: z.string().optional(),
-    startTime: z.string().refine(val => !isNaN(Date.parse(val)), {
-      message: 'Invalid start time',
-    }).optional(),
-    endTime: z.string().refine(val => !isNaN(Date.parse(val)), {
-      message: 'Invalid end time',
-    }).optional(),
+    startTime: z
+      .string()
+      .refine(val => !isNaN(Date.parse(val)), {
+        message: 'Invalid start time',
+      })
+      .optional(),
+    endTime: z
+      .string()
+      .refine(val => !isNaN(Date.parse(val)), {
+        message: 'Invalid end time',
+      })
+      .optional(),
+    status: z.enum(['UPCOMING', 'ONGOING', 'PAST']).optional(),
   }),
 });
 

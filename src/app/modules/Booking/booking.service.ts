@@ -53,8 +53,10 @@ export const createBooking = async (data: {
 };
 
 export const getBookings = async (filters?: {
+  searchTerm?: string;
   resource?: string;
   date?: string;
+  status?: 'upcoming' | 'ongoing' | 'past';
   page?: number;
   limit?: number;
 }): Promise<{
@@ -65,35 +67,84 @@ export const getBookings = async (filters?: {
   };
   data: Booking[];
 }> => {
-  const whereClause: any = {};
+  const andConditions: any[] = [];
 
-  //  Filter by resourc
   if (filters?.resource) {
-    whereClause.resource = filters.resource;
+    andConditions.push({
+      resource: filters.resource,
+    });
   }
 
-  // Filter by date
+  //  Date filter
   if (filters?.date) {
     const date = new Date(filters.date);
     const nextDay = new Date(date);
     nextDay.setDate(nextDay.getDate() + 1);
 
-    whereClause.startTime = {
-      gte: date,
-      lt: nextDay,
-    };
+    andConditions.push({
+      startTime: {
+        gte: date,
+        lt: nextDay,
+      },
+    });
   }
+
+  // Search term filter
+  if (filters?.searchTerm) {
+    andConditions.push({
+      OR: [
+        {
+          requestedBy: {
+            contains: filters.searchTerm,
+            mode: 'insensitive',
+          },
+        },
+        {
+          resource: {
+            contains: filters.searchTerm,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    });
+  }
+
+  //  Status filter
+  if (filters?.status) {
+    const now = new Date();
+
+    if (filters.status === 'upcoming') {
+      andConditions.push({
+        startTime: { gt: now },
+      });
+    }
+
+    if (filters.status === 'ongoing') {
+      andConditions.push({
+        startTime: { lte: now },
+        endTime: { gte: now },
+      });
+    }
+
+    if (filters.status === 'past') {
+      andConditions.push({
+        endTime: { lt: now },
+      });
+    }
+  }
+
+  const whereClause = andConditions.length > 0 ? { AND: andConditions } : {};
 
   const page = filters?.page && filters.page > 0 ? filters.page : 1;
   const limit = filters?.limit && filters.limit > 0 ? filters.limit : 10;
   const skip = (page - 1) * limit;
 
-  // all user
+  // Total count
   const total = await prisma.booking.count({
     where: whereClause,
   });
 
-  // fetch data
+  // Fetch bookings
   const bookings = await prisma.booking.findMany({
     where: whereClause,
     orderBy: {
@@ -124,6 +175,7 @@ export const getBookingById = async (id: string): Promise<Booking | null> => {
   return booking;
 };
 
+// update booking
 export const updateBooking = async (data: {
   id: string;
   resource?: string;

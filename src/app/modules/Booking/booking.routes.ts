@@ -12,7 +12,7 @@ router.post(
   BookingControllers.createBookingController,
 );
 
-// Get All Bookings 
+// Get All Bookings
 router.get('/', BookingControllers.getBookingsController);
 
 // Get Booking by ID
@@ -25,7 +25,7 @@ router.put(
   BookingControllers.updateBookingController,
 );
 
-//  Delete 
+//  Delete
 router.delete('/:id', BookingControllers.deleteBookingController);
 
 export const BookingRouters = router;

@@ -35,12 +35,12 @@ model User {
 // Booking
 
 model Booking {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   resource    String
   requestedBy String
   startTime   DateTime
   endTime     DateTime
-  createdAt   DateTime @default(now())
+  createdAt   DateTime      @default(now())
 }
 
 enum UserRoleEnum {
@@ -48,9 +48,10 @@ enum UserRoleEnum {
   SUPERADMIN
 }
 
-enum ProductStatus {
-  ACTIVE
-  INACTIVE
+enum BookingStatus {
+  UPCOMING
+  ONGOING
+  PAST
 }
 
 enum UserStatus {
