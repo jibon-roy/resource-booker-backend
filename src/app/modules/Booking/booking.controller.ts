@@ -25,7 +25,13 @@ const getBookingsController = catchAsync(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Bookings retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: {
+      total: result.meta.total,
+      page: result.meta.page,
+      limit: result.meta.limit,
+      totalPage: Math.ceil(result.meta.total / result.meta.limit),
+    },
   });
 });
 

@@ -1,8 +1,9 @@
 import { PrismaClient, Booking } from '@prisma/client';
+import AppError from '../../errors/AppError';
 
 const prisma = new PrismaClient();
 
-// Buffer time in minutes
+// Buffer time 
 const BUFFER_MINUTES = 10;
 
 
@@ -16,7 +17,7 @@ export const createBooking = async (data: {
   const start = new Date(data.startTime);
   const end = new Date(data.endTime);
 
-  // Conflict detection with buffer logic
+  // Conflict detect
   const conflict = await prisma.booking.findFirst({
     where: {
       resource: data.resource,
@@ -35,8 +36,9 @@ export const createBooking = async (data: {
   });
 
   if (conflict) {
-    throw new Error(
-      `Conflict detected: ${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`,
+    throw new AppError(
+      409,
+      `Conflict detected: ${data.resource} is already booked from ${conflict.startTime.toLocaleString()} to ${conflict.endTime.toLocaleString()}`
     );
   }
 
@@ -57,13 +59,24 @@ export const createBooking = async (data: {
 export const getBookings = async (filters?: {
   resource?: string;
   date?: string;
-}): Promise<Booking[]> => {
+  page?: number;
+  limit?: number;
+}): Promise<{
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+  data: Booking[];
+}> => {
   const whereClause: any = {};
 
+  //  Filter by resourc
   if (filters?.resource) {
     whereClause.resource = filters.resource;
   }
 
+  // Filter by date
   if (filters?.date) {
     const date = new Date(filters.date);
     const nextDay = new Date(date);
@@ -75,19 +88,41 @@ export const getBookings = async (filters?: {
     };
   }
 
-  return prisma.booking.findMany({
+  const page = filters?.page && filters.page > 0 ? filters.page : 1;
+  const limit = filters?.limit && filters.limit > 0 ? filters.limit : 10;
+  const skip = (page - 1) * limit;
+
+  // all user
+  const total = await prisma.booking.count({
+    where: whereClause,
+  });
+
+  // fetch data
+  const bookings = await prisma.booking.findMany({
     where: whereClause,
     orderBy: {
       startTime: 'asc',
     },
+    skip,
+    take: limit,
   });
+
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: bookings,
+  };
 };
+
 
 export const deleteBooking = async (id: string): Promise<Booking> => {
   const booking = await prisma.booking.findUnique({ where: { id } });
 
   if (!booking) {
-    throw new Error('Booking not found');
+    throw new AppError(404, 'Booking not found');
   }
 
   return prisma.booking.delete({ where: { id } });
