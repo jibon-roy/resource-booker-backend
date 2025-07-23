@@ -1,51 +1,81 @@
-# Server with Typescript, PostgreSQL, Prisma and zod validation
+# **ResourceBooker - Backend**
 
-## How to run this project
+### Server with **Node.js, Express.js, TypeScript, MongoDB, Prisma, and Zod Validation**
+
+---
+## Live Links
+
+- Backend: https://resource-booker-backend.vercel.app
+- Postman Documentation: https://documenter.getpostman.com/view/35007722/2sB34mie7a
+- Frontend: https://resourcebooker.vercel.app 
+___
+
+## **Technology Stack**
+
+* **MongoDB** – Database
+* **Prisma ORM** – Database modeling & querying
+* **Express.js** – Server-side framework
+* **TypeScript** – Strongly typed JavaScript
+* **Zod** – Schema validation
+* **JWT** – Authentication & Authorization
+* **Bcrypt** – Password hashing
+* **Moment.js** – Date formatting
 
 ---
 
-### Clone the project
 
-    git clone repository-url
 
-### Go to project folder
+##  **How to Run This Project**
 
-    cd project_name
+### 1️. Clone the project
 
-### Install dependencies
+```bash
+git clone <repository-url>
+```
 
-    npm install
+### 2. Go to the project folder
 
-### Open project to vscode
+```bash
+cd project_name
+```
 
-    code .
+### 3️. Install dependencies
 
-### Open terminal & Run project
+```bash
+npm install
+```
 
-    npm run dev
+### 4️. Open the project in VS Code
 
-### Build project for deploying
+```bash
+code .
+```
 
-    npm run build
+### 5️. Run the project in development mode
 
-### Run build project
+```bash
+npm run dev
+```
 
-    npm run start:prod
+### 6️. Build the project for deployment
 
-## Technology used
+```bash
+npm run build
+```
+
+### 7️. Run the production build
+
+```bash
+npm run start:prod
+```
 
 ---
 
-- PostgreSQL (Database)
-- Prisma ORM
-- Express
-- Typescript
-- Zod (Validation)
-- JWT-token
-- Bcrypt (Hashing)
-- Moment (Date formatting)
 
----
+<p align="center">
 
-Happy Coding - Developeremdad 🧑‍💻
-# backend-template
+| ![Dashboard Preview](src/assets/thank-you-2.gif) |
+| :----------------------------------------------: |
+|    **Thanks for checking out this project!**     |
+
+</p>
