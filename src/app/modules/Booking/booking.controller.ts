@@ -21,10 +21,22 @@ const createBookingController = catchAsync(async (req, res) => {
 });
 
 const getBookingsController = catchAsync(async (req, res) => {
-  const { resource, date } = req.query;
+  const {
+    searchTerm,
+    resource,
+    date,
+    status,
+    page = '1',
+    limit = '10',
+  } = req.query;
+
   const result = await getBookings({
+    searchTerm: searchTerm as string,
     resource: resource as string,
     date: date as string,
+    status: status as 'upcoming' | 'ongoing' | 'past',
+    page: Number(page),
+    limit: Number(limit),
   });
 
   sendResponse(res, {

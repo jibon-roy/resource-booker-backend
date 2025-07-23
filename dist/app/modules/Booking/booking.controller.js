@@ -27,10 +27,14 @@ const createBookingController = (0, catchAsync_1.default)((req, res) => __awaite
     });
 }));
 const getBookingsController = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { resource, date } = req.query;
+    const { searchTerm, resource, date, status, page = '1', limit = '10', } = req.query;
     const result = yield (0, booking_service_1.getBookings)({
+        searchTerm: searchTerm,
         resource: resource,
         date: date,
+        status: status,
+        page: Number(page),
+        limit: Number(limit),
     });
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,

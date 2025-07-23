@@ -25,7 +25,7 @@ router.put(
   BookingControllers.updateBookingController,
 );
 
-//  Delete
+//  Delete Booking
 router.delete('/:id', BookingControllers.deleteBookingController);
 
 export const BookingRouters = router;

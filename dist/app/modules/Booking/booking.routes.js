@@ -17,6 +17,6 @@ router.get('/', booking_controller_1.BookingControllers.getBookingsController);
 router.get('/:id', booking_controller_1.BookingControllers.getBookingByIdController);
 // Update Booking
 router.put('/:id', (0, validateRequest_1.default)(booking_validation_1.bookingValidation.updateBookingValidation), booking_controller_1.BookingControllers.updateBookingController);
-//  Delete
+//  Delete Booking
 router.delete('/:id', booking_controller_1.BookingControllers.deleteBookingController);
 exports.BookingRouters = router;

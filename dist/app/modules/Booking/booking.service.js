@@ -54,13 +54,12 @@ const createBooking = (data) => __awaiter(void 0, void 0, void 0, function* () {
 exports.createBooking = createBooking;
 const getBookings = (filters) => __awaiter(void 0, void 0, void 0, function* () {
     const andConditions = [];
-    // ✅ Resource filter
     if (filters === null || filters === void 0 ? void 0 : filters.resource) {
         andConditions.push({
             resource: filters.resource,
         });
     }
-    // ✅ Date filter (startTime within the date range)
+    //  Date filter
     if (filters === null || filters === void 0 ? void 0 : filters.date) {
         const date = new Date(filters.date);
         const nextDay = new Date(date);
@@ -72,7 +71,7 @@ const getBookings = (filters) => __awaiter(void 0, void 0, void 0, function* () 
             },
         });
     }
-    // ✅ Search term filter (requestedBy OR resource)
+    // Search term filter
     if (filters === null || filters === void 0 ? void 0 : filters.searchTerm) {
         andConditions.push({
             OR: [
@@ -91,7 +90,7 @@ const getBookings = (filters) => __awaiter(void 0, void 0, void 0, function* () 
             ],
         });
     }
-    // ✅ Status filter on-the-fly (time-based, no DB status dependency)
+    //  Status filter
     if (filters === null || filters === void 0 ? void 0 : filters.status) {
         const now = new Date();
         if (filters.status === 'upcoming') {
@@ -115,11 +114,11 @@ const getBookings = (filters) => __awaiter(void 0, void 0, void 0, function* () 
     const page = (filters === null || filters === void 0 ? void 0 : filters.page) && filters.page > 0 ? filters.page : 1;
     const limit = (filters === null || filters === void 0 ? void 0 : filters.limit) && filters.limit > 0 ? filters.limit : 10;
     const skip = (page - 1) * limit;
-    // ✅ Total count
+    // Total count
     const total = yield prisma.booking.count({
         where: whereClause,
     });
-    // ✅ Fetch bookings (sorted by startTime)
+    // Fetch bookings
     const bookings = yield prisma.booking.findMany({
         where: whereClause,
         orderBy: {
@@ -148,6 +147,7 @@ const getBookingById = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return booking;
 });
 exports.getBookingById = getBookingById;
+// update booking
 const updateBooking = (data) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     const booking = yield prisma.booking.findUnique({
